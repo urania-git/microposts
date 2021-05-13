@@ -14,13 +14,30 @@
                         {{-- 投稿内容 --}}
                         <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
                     </div>
-                    <div>
-                        @if (Auth::id() == $micropost->user_id)
-                            {{-- 投稿削除ボタンのフォーム --}}
-                            {!! Form::open(['route' => ['microposts.destroy', $micropost->id], 'method' => 'delete']) !!}
+                    <div style="display:flex;">
+                        <div>
+                            @if (Auth::id() != $micropost->id)
+                                @if (Auth::user()->is_favorite($micropost->id))
+                                    {{-- アンフェイバリットボタンのフォーム --}}
+                                    {!! Form::open(['route' => ['user.unfavorite', $micropost->id], 'method' => 'delete']) !!}
+                                        {!! Form::submit('Unfavorite', ['class' => "btn btn-light btn-sm"]) !!}
+                                    {!! Form::close() !!}
+                                @else
+                                    {{-- フェイバリットボタンのフォーム --}}
+                                    {!! Form::open(['route' => ['user.favorite', $micropost->id]]) !!}
+                                        {!! Form::submit('Favorite', ['class' => "btn btn-success btn-sm"]) !!}
+                                    {!! Form::close() !!}
+                                @endif
+                            @endif
+                        </div>
+                        <div>
+                            @if (Auth::id() == $micropost->user_id)
+                                {{-- 投稿削除ボタンのフォーム --}}
+                                {!! Form::open(['route' => ['microposts.destroy', $micropost->id], 'method' => 'delete']) !!}
                                 {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
-                            {!! Form::close() !!}
-                        @endif
+                                {!! Form::close() !!}
+                            @endif
+                        </div>
                     </div>
                 </div>
             </li>
